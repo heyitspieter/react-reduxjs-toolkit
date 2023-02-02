@@ -1,0 +1,36 @@
+.posts {
+  display: block;
+}
+
+.posts h2 {
+  font-size: 2.2rem;
+}
+
+.posts__content {
+  margin-top: 1.5rem;
+}
+
+article {
+  padding: 1.3rem 2rem;
+  border-radius: 0.6rem;
+  border: 1px solid #ddddda;
+}
+
+article:not(:last-child) {
+  margin-bottom: 1.4rem;
+}
+
+article h3 {
+  font-size: 2rem;
+}
+
+article p {
+  margin-top: 1rem;
+  font-size: 1.4rem;
+}
+
+.post-author {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  font-style: italic;
+}
