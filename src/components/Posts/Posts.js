@@ -1,45 +1,30 @@
-import { useEffect } from 'react';
 import PostsItem from '../PostsItem/PostsItem';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  allPosts,
-  fetchPosts,
-  getPostsError,
-  getPostsStatus,
-} from '../../features/posts/postsSlice';
+import { useGetPostsQuery } from '../../features/posts/postSlice_rtkQuery';
 
 import './Posts.css';
 
 const Posts = () => {
-  const dispatch = useDispatch();
-
-  const posts = useSelector(allPosts);
-  const status = useSelector(getPostsStatus);
-  const error = useSelector(getPostsError);
-
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchPosts());
-    }
-  }, [status, dispatch]);
+  const {
+    data: posts,
+    isLoading,
+    isError,
+    isSuccess,
+    error,
+  } = useGetPostsQuery('getPosts');
 
   let content = '';
 
-  if (status === 'pending') {
+  if (isLoading) {
     content = 'Loading posts..';
   }
 
-  if (status === 'successful') {
-    const orderedPosts = posts
-      .slice()
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-
-    content = orderedPosts.map((post, idx) => (
-      <PostsItem key={idx} post={post} />
+  if (isSuccess) {
+    content = posts.ids.map(postId => (
+      <PostsItem key={postId} postId={postId} />
     ));
   }
 
-  if (status === 'failed') {
+  if (isError) {
     content = <p>{error.message}</p>;
   }
 

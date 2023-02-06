@@ -1,15 +1,19 @@
-import { useDispatch } from 'react-redux';
-import { addReaction } from '../../features/posts/postsSlice';
+import { useAddReactionMutation } from '../../features/posts/postSlice_rtkQuery';
 
 import './PostReactionBtns.css';
 
 const emojis = { like: '👍️', wow: '😯', heart: '💙', rocket: '🚀' };
 
 function PostReactions({ post }) {
-  const dispatch = useDispatch();
+  const [addReaction] = useAddReactionMutation();
 
-  const onReactionClick = (post, reaction) => {
-    dispatch(addReaction({ postId: post.id, reaction }));
+  const onReactionClick = reaction => {
+    const newValue = post.reactions[reaction] + 1;
+
+    addReaction({
+      postId: post.id,
+      reactions: { ...post.reactions, [reaction]: newValue },
+    });
   };
 
   const reactionButtons = Object.entries(emojis).map(([name, emoji]) => {
@@ -18,7 +22,7 @@ function PostReactions({ post }) {
         key={name}
         name={name}
         className="reaction-btn"
-        onClick={() => onReactionClick(post, name)}
+        onClick={() => onReactionClick(name)}
       >
         {emoji} {post.reactions[name]}
       </button>

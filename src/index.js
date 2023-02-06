@@ -5,11 +5,11 @@ import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import reportWebVitals from './reportWebVitals';
-import { fetchUsers } from './features/users/usersSlice';
+import { extendedApiSlice } from './features/posts/postSlice_rtkQuery';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-store.dispatch(fetchUsers());
+store.dispatch(extendedApiSlice.endpoints.getPosts.initiate());
 
 root.render(
   <React.StrictMode>

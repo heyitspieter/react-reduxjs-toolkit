@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { allUsers } from '../../features/users/usersSlice';
-import { createNewPost } from '../../features/posts/postsSlice';
+import { useCreateNewPostMutation } from '../../features/posts/postSlice_rtkQuery';
 
 import './AddPostForm.css';
 
@@ -13,19 +13,11 @@ const AddPostForm = () => {
 
   const [userId, setUserId] = useState('');
 
-  const [reqStatus, setReqStatus] = useState('idle');
-
   const users = useSelector(allUsers);
 
   const { title, content } = inputs;
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (reqStatus !== 'idle') {
-      alert(reqStatus);
-    }
-  }, [reqStatus]);
+  const [createNewPost, { isLoading }] = useCreateNewPostMutation();
 
   const inputChangeHandler = (key, e) => {
     const value = e.target.value;
@@ -40,7 +32,7 @@ const AddPostForm = () => {
     setUserId(e.target.value);
   };
 
-  const onSavePost = e => {
+  const onSavePost = async e => {
     e.preventDefault();
 
     for (const key in inputs) {
@@ -50,18 +42,13 @@ const AddPostForm = () => {
     }
 
     try {
-      setReqStatus('pending');
-
-      // Dispatch reducer action creator
-      dispatch(createNewPost({ title, body: content, userId })).unwrap();
+      await createNewPost({ title, body: content, userId }).unwrap();
 
       setUserId('');
 
       setInputs({ title: '', content: '' });
     } catch (error) {
       console.log('Failed to save post', error);
-    } finally {
-      setReqStatus('idle');
     }
   };
 
@@ -116,7 +103,9 @@ const AddPostForm = () => {
           </select>
         </div>
         <div className="form-group">
-          <button className="form-group__btn">Create Post</button>
+          <button disabled={isLoading} className="form-group__btn">
+            Create Post
+          </button>
         </div>
       </form>
     </div>
